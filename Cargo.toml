@@ -41,9 +41,9 @@ libc = { version = "0.2.118", features = ["extra_traits"], optional = true }
 
 # On all other Unix-family platforms, and under Miri, we always use the libc
 # backend, so enable its dependencies unconditionally.
-[target.'cfg(any(rustix_use_libc, miri, not(all(target_os = "linux", any(target_arch = "x86", all(target_arch = "x86_64", target_pointer_width = "64"), target_arch = "arm", all(target_arch = "aarch64", target_pointer_width = "64"), all(target_arch = "powerpc64", target_endian = "little"), target_arch = "riscv64", all(target_arch = "mips", target_endian = "little"), all(target_arch = "mips64", target_endian = "little"))))))'.dependencies]
-libc_errno = { package = "errno", version = "0.2.8", default-features = false }
-libc = { version = "0.2.118", features = ["extra_traits"] }
+#[target.'cfg(any(rustix_use_libc, miri, not(all(target_os = "linux", any(target_arch = "x86", all(target_arch = "x86_64", target_pointer_width = "64"), target_arch = "arm", all(target_arch = "aarch64", target_pointer_width = "64"), all(target_arch = "powerpc64", target_endian = "little"), target_arch = "riscv64", all(target_arch = "mips", target_endian = "little"), all(target_arch = "mips64", target_endian = "little"))))))'.dependencies]
+#libc_errno = { package = "errno", version = "0.2.8", default-features = false }
+#libc = { version = "0.2.118", features = ["extra_traits"] }
 
 [target.'cfg(all(any(target_os = "android", target_os = "linux"), any(rustix_use_libc, miri, not(all(target_os = "linux", any(target_arch = "x86", all(target_arch = "x86_64", target_pointer_width = "64"), target_arch = "arm", all(target_arch = "aarch64", target_pointer_width = "64"), all(target_arch = "powerpc64", target_endian = "little"), target_arch = "riscv64", all(target_arch = "mips", target_endian = "little"), all(target_arch = "mips64", target_endian = "little")))))))'.dependencies]
 # Some syscalls do not have libc wrappers, such as in `io_uring`. For these,
@@ -51,14 +51,14 @@ libc = { version = "0.2.118", features = ["extra_traits"] }
 linux-raw-sys = { version = "0.0.46", default-features = false, optional = true, features = ["general", "no_std"] }
 
 # For the libc backend on Windows, use the Winsock2 API in windows-sys.
-[target.'cfg(windows)'.dependencies.windows-sys]
-version = "0.36.0"
-features = [
-    "Win32_Foundation",
-    "Win32_Networking_WinSock",
-    "Win32_NetworkManagement_IpHelper",
-    "Win32_System_Threading"
-]
+#[target.'cfg(windows)'.dependencies.windows-sys]
+#version = "0.36.0"
+#features = [
+#    "Win32_Foundation",
+#    "Win32_Networking_WinSock",
+#    "Win32_NetworkManagement_IpHelper",
+#    "Win32_System_Threading"
+#]
 
 [dev-dependencies]
 tempfile = "3.2.0"
