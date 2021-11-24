@@ -5,6 +5,7 @@
 //! to rustix APIs with string arguments, and it allows rustix to implement
 //! NUL-termination without the need for copying where possible.
 
+#[allow(unused_imports)]
 use crate::ffi::{ZStr, ZString};
 use crate::io;
 #[cfg(feature = "itoa")]
