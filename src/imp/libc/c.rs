@@ -7,8 +7,8 @@ pub(crate) use winapi::shared::ws2def::{
     AF_INET6, AF_IPX, AF_IRDA, AF_SNA, AF_UNIX, AF_UNSPEC, IPPROTO_AH, IPPROTO_EGP, IPPROTO_ESP,
     IPPROTO_FRAGMENT, IPPROTO_ICMP, IPPROTO_ICMPV6, IPPROTO_IDP, IPPROTO_IGMP, IPPROTO_IP,
     IPPROTO_IPV6, IPPROTO_PIM, IPPROTO_PUP, IPPROTO_RAW, IPPROTO_ROUTING, IPPROTO_SCTP,
-    IPPROTO_TCP, IPPROTO_UDP, MSG_TRUNC, SOCKADDR as sockaddr, SOCKADDR_IN as sockaddr_in,
-    SOCKADDR_STORAGE_LH as sockaddr_storage, TCP_NODELAY,
+    IPPROTO_TCP, IPPROTO_UDP, LPWSABUF, MSG_TRUNC, SOCKADDR as sockaddr,
+    SOCKADDR_IN as sockaddr_in, SOCKADDR_STORAGE_LH as sockaddr_storage, TCP_NODELAY, WSAMSG,
 };
 
 pub(crate) use winapi::shared::ws2ipdef::{
@@ -58,3 +58,75 @@ const SD_BOTH: c_int = 2;
 pub(crate) const SHUT_WR: c_int = SD_SEND;
 pub(crate) const SHUT_RD: c_int = SD_RECEIVE;
 pub(crate) const SHUT_RDWR: c_int = SD_BOTH;
+
+#[allow(non_snake_case)]
+pub(crate) unsafe fn sendmsg(
+    handle: SOCKET,
+    lpBuffers: LPWSABUF,
+    dwBufferCount: c_ulong,
+    lpTo: *mut sockaddr,
+    iToLen: c_int,
+    dwFlags: c_ulong,
+) -> c_int {
+    let mut lpNumberOfBytesSent: c_ulong = 0;
+
+    // No overlapping IO support
+    let lpOverlapped = core::ptr::null_mut();
+    let lpCompletionRoutine = None;
+
+    // Uses WSASendTo, because WSASendMsg is only usable with Datagram or Raw Sockets.
+    // But the the expectation from sendmsg, is that it works with other sockets, like Stream based ones as well.
+    let res = WSASendTo(
+        handle,
+        lpBuffers,
+        dwBufferCount,
+        &mut lpNumberOfBytesSent,
+        dwFlags,
+        lpTo,
+        iToLen,
+        lpOverlapped,
+        lpCompletionRoutine,
+    );
+
+    if res == 0 {
+        lpNumberOfBytesSent as _
+    } else {
+        -1
+    }
+}
+
+#[allow(non_snake_case)]
+pub(crate) unsafe fn recvmsg(
+    s: SOCKET,
+    lpBuffers: LPWSABUF,
+    dwBufferCount: c_ulong,
+    lpFrom: *mut sockaddr,
+    iFromLen: *mut c_int,
+    lpFlags: *mut c_ulong,
+) -> c_int {
+    let mut lpNumberOfBytesRecvd: c_ulong = 0;
+
+    // No overlapping IO support
+    let lpOverlapped = core::ptr::null_mut();
+    let lpCompletionRoutine = None;
+
+    // Use WSARecvFrom, as WSARecMsg is a Microsoft specific extension, that is not supported
+    // by winapi.
+    let res = WSARecvFrom(
+        s,
+        lpBuffers,
+        dwBufferCount,
+        &mut lpNumberOfBytesRecvd,
+        lpFlags,
+        lpFrom,
+        iFromLen,
+        lpOverlapped,
+        lpCompletionRoutine,
+    );
+
+    if res == 0 {
+        lpNumberOfBytesRecvd as _
+    } else {
+        -1
+    }
+}

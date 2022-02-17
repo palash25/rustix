@@ -9,7 +9,9 @@ pub(crate) mod syscalls;
 pub(crate) use addr::offsetof_sun_path;
 pub(crate) use read_sockaddr::{
     initialize_family_to_unspec, maybe_read_sockaddr_os, read_sockaddr, read_sockaddr_os,
+    read_sockaddr_unix_opt, read_sockaddr_v4_opt, read_sockaddr_v6_opt,
 };
+pub(crate) use send_recv::msghdr_default;
 pub(crate) use write_sockaddr::{encode_sockaddr_v4, encode_sockaddr_v6, write_sockaddr};
 
 pub use addr::{SocketAddrStorage, SocketAddrUnix};

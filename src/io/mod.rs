@@ -8,6 +8,7 @@ mod error;
 mod eventfd;
 #[cfg(not(feature = "std"))]
 pub(crate) mod fd;
+mod io_slice;
 mod ioctl;
 #[cfg(not(any(windows, target_os = "redox")))]
 mod is_read_write;
@@ -40,6 +41,7 @@ pub use dup::{dup, dup2, dup3, DupFlags};
 pub use error::{with_retrying, Error, Result};
 #[cfg(any(target_os = "android", target_os = "linux"))]
 pub use eventfd::{eventfd, EventfdFlags};
+pub use io_slice::{IoSlice, IoSliceMut};
 #[cfg(any(target_os = "ios", target_os = "macos"))]
 pub use ioctl::ioctl_fioclex;
 pub use ioctl::ioctl_fionbio;
@@ -79,7 +81,7 @@ pub use poll::{poll, PollFd, PollFlags};
 #[cfg(all(feature = "procfs", any(target_os = "android", target_os = "linux")))]
 pub use procfs::{proc_self_fd, proc_self_fdinfo_fd, proc_self_maps, proc_self_pagemap};
 #[cfg(not(windows))]
-pub use read_write::{pread, pwrite, read, readv, write, writev, IoSlice, IoSliceMut};
+pub use read_write::{pread, pwrite, read, readv, write, writev};
 #[cfg(not(any(windows, target_os = "redox")))]
 pub use read_write::{preadv, pwritev};
 #[cfg(any(target_os = "android", target_os = "linux"))]
