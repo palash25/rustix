@@ -152,14 +152,14 @@ unsafe fn init_from_auxp(mut auxp: *const Elf_auxv_t) {
     loop {
         let Elf_auxv_t { a_type, a_val } = *auxp;
         match a_type as _ {
-            AT_PAGESZ => AUXV.page_size = a_val as usize,
-            AT_CLKTCK => AUXV.clock_ticks_per_second = a_val as usize,
-            AT_HWCAP => AUXV.hwcap = a_val as usize,
-            AT_HWCAP2 => AUXV.hwcap2 = a_val as usize,
+            AT_PAGESZ => AUXV.page_size = a_val.addr(),
+            AT_CLKTCK => AUXV.clock_ticks_per_second = a_val.addr(),
+            AT_HWCAP => AUXV.hwcap = a_val.addr(),
+            AT_HWCAP2 => AUXV.hwcap2 = a_val.addr(),
             AT_SYSINFO_EHDR => AUXV.sysinfo_ehdr = a_val.cast(),
             AT_PHDR => AUXV.phdr = a_val.cast(),
-            AT_PHNUM => AUXV.phnum = a_val as usize,
-            AT_PHENT => assert_eq!(a_val as usize, size_of::<Elf_Phdr>()),
+            AT_PHNUM => AUXV.phnum = a_val.addr(),
+            AT_PHENT => assert_eq!(a_val.addr(), size_of::<Elf_Phdr>()),
             AT_EXECFN => AUXV.execfn = a_val.cast(),
             AT_NULL => break,
             _ => (),

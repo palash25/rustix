@@ -79,6 +79,9 @@
 //! [`Result`]: https://docs.rs/rustix/latest/rustix/io/type.Result.html
 //! [`Arg`]: https://docs.rs/rustix/latest/rustix/path/trait.Arg.html
 
+#![feature(strict_provenance)]
+#![deny(fuzzy_provenance_casts)]
+#![deny(lossy_provenance_casts)]
 #![deny(missing_docs)]
 #![allow(stable_features)]
 #![cfg_attr(linux_raw, deny(unsafe_code))]

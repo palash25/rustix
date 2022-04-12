@@ -56,8 +56,8 @@ fn elf_hash(name: &ZStr) -> u32 {
 /// Cast `value` to a pointer type, doing some checks for validity.
 fn make_pointer<T>(value: *const c_void) -> Option<*const T> {
     if value.is_null()
-        || (value as usize).checked_add(size_of::<T>()).is_none()
-        || (value as usize) % align_of::<T>() != 0
+        || (value.addr()).checked_add(size_of::<T>()).is_none()
+        || (value.addr()) % align_of::<T>() != 0
     {
         return None;
     }
@@ -387,10 +387,7 @@ impl Vdso {
                 }
 
                 let sum = self.addr_from_elf(sym.st_value).unwrap();
-                assert!(
-                    sum as usize >= self.load_addr as usize
-                        && sum as usize <= self.load_end as usize
-                );
+                assert!(sum.addr() >= self.load_addr.addr() && sum.addr() <= self.load_end.addr());
                 return sum as *mut c::c_void;
             }
         }
@@ -399,7 +396,7 @@ impl Vdso {
     }
 
     unsafe fn base_plus(&self, offset: usize) -> Option<*const c_void> {
-        let _ = (self.load_addr as usize).checked_add(offset)?;
+        let _ = (self.load_addr.addr()).checked_add(offset)?;
         Some(self.load_addr.cast::<u8>().add(offset).cast())
     }
 

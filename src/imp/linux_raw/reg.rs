@@ -16,6 +16,7 @@
 use super::c;
 use super::fd::RawFd;
 use core::marker::PhantomData;
+use core::ptr;
 
 pub(super) trait ToAsm: private::Sealed {
     /// Convert `self` to a `usize` ready to be passed to a syscall
@@ -108,8 +109,8 @@ pub(super) struct RetReg<Num: RetNumber> {
 impl<Num: RetNumber> RetReg<Num> {
     #[inline]
     pub(super) fn decode_usize(self) -> usize {
-        debug_assert!(!(-4095..0).contains(&(self.raw as isize)));
-        self.raw as usize
+        debug_assert!(!(-4095..0).contains(&(self.raw.addr() as isize)));
+        self.raw.addr()
     }
 
     #[inline]
@@ -164,7 +165,7 @@ impl<Num: RetNumber> RetReg<Num> {
 
     #[inline]
     pub(super) fn decode_error_code(self) -> u16 {
-        let bits = self.raw as usize;
+        let bits = self.raw.addr();
 
         // `raw` must be in `-4095..0`. Linux always returns errors in
         // `-4095..0`, and we double-check it here.
@@ -180,12 +181,12 @@ impl<Num: RetNumber> RetReg<Num> {
 
     #[inline]
     pub(super) fn is_negative(&self) -> bool {
-        (self.raw as isize) < 0
+        (self.raw.addr() as isize) < 0
     }
 
     #[inline]
     pub(super) fn is_in_range(&self, range: core::ops::Range<isize>) -> bool {
-        range.contains(&(self.raw as isize))
+        range.contains(&(self.raw.addr() as isize))
     }
 }
 
@@ -208,7 +209,7 @@ pub(super) struct SyscallNumber<'a> {
 impl<'a> ToAsm for SyscallNumber<'a> {
     #[inline]
     unsafe fn to_asm(self) -> *mut Opaque {
-        self.nr as usize as *mut Opaque
+        ptr::invalid_mut(self.nr as usize)
     }
 }
 

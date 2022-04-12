@@ -28,12 +28,12 @@
 
 use crate::ffi::ZStr;
 use core::ffi::c_void;
-use core::ptr::null_mut;
+use core::ptr::{self, null_mut};
 use core::sync::atomic::{self, AtomicPtr, Ordering};
 use core::{marker, mem};
 
 const NULL: *mut c_void = null_mut();
-const INVALID: *mut c_void = 1 as *mut c_void;
+const INVALID: *mut c_void = ptr::invalid_mut(1);
 
 macro_rules! weak {
     ($vis:vis fn $name:ident($($t:ty),*) -> $ret:ty) => (

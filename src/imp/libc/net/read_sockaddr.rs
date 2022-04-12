@@ -249,7 +249,7 @@ unsafe fn inner_read_sockaddr_os(
         sun_path: [0; 108],
     };
     #[cfg(unix)]
-    let offsetof_sun_path = (as_ptr(&z.sun_path) as usize) - (as_ptr(&z) as usize);
+    let offsetof_sun_path = (as_ptr(&z.sun_path).addr()) - (as_ptr(&z).addr());
 
     assert!(len >= size_of::<c::sa_family_t>());
     match family {
