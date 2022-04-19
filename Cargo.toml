@@ -38,7 +38,7 @@ once_cell = { version = "1.5.2", optional = true }
 [target.'cfg(all(not(rustix_use_libc), not(miri), target_os = "linux", any(target_arch = "x86", all(target_arch = "x86_64", target_pointer_width = "64"), target_arch = "arm", all(target_arch = "aarch64", target_pointer_width = "64"), all(target_arch = "powerpc64", target_endian = "little"), target_arch = "riscv64", all(target_arch = "mips", target_endian = "little"), all(target_arch = "mips64", target_endian = "little"))))'.dependencies]
 linux-raw-sys = { version = "0.0.46", default-features = false, features = ["general", "errno", "ioctl", "no_std"] }
 libc_errno = { package = "errno", version = "0.2.8", default-features = false, optional = true }
-libc = { version = "0.2.118", features = ["extra_traits"], optional = true }
+libc = { version = "0.2.124", default-features = false, features = ["extra_traits"], optional = true }
 
 # On all other Unix-family platforms, and under Miri, we always use the libc
 # backend, so enable its dependencies unconditionally.
